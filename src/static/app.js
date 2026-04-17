@@ -498,6 +498,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareUrl = `${window.location.origin}/static/index.html?activity=${encodeURIComponent(
+      name
+    )}`;
+    const shareText = `Check out the ${name} activity at Mergington High School!`;
+    const encodedShareUrl = encodeURIComponent(shareUrl);
+    const encodedShareText = encodeURIComponent(shareText);
+    const emailSubject = encodeURIComponent(`Mergington activity: ${name}`);
 
     // Create activity tag
     const tagHtml = `
@@ -519,6 +526,44 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const socialShareButtons = `
+      <div class="share-actions">
+        <span class="share-label">Share with friends:</span>
+        <div class="share-buttons">
+          <a
+            class="share-button"
+            href="https://wa.me/?text=${encodedShareText}%20${encodedShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
+          <a
+            class="share-button"
+            href="https://twitter.com/intent/tweet?text=${encodedShareText}&url=${encodedShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            X
+          </a>
+          <a
+            class="share-button"
+            href="https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Facebook
+          </a>
+          <a
+            class="share-button"
+            href="mailto:?subject=${emailSubject}&body=${encodedShareText}%0A%0A${encodedShareUrl}"
+          >
+            Email
+          </a>
+        </div>
+      </div>
+    `;
+
     activityCard.innerHTML = `
       ${tagHtml}
       <h4>${name}</h4>
@@ -528,6 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      ${socialShareButtons}
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
