@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
+  const SCHOOL_NAME = "Mergington High School";
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -498,10 +499,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
-    const shareUrl = `${window.location.origin}/static/index.html?activity=${encodeURIComponent(
-      name
-    )}`;
-    const shareText = `Check out the ${name} activity at Mergington High School!`;
+    const shareUrl = `${window.location.origin}/static/index.html`;
+    const shareText = `Check out the ${name} activity at ${SCHOOL_NAME}!`;
     const encodedShareUrl = encodeURIComponent(shareUrl);
     const encodedShareText = encodeURIComponent(shareText);
     const emailSubject = encodeURIComponent(`Mergington activity: ${name}`);
