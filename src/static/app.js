@@ -24,7 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
-  const SCHOOL_NAME = "Mergington High School";
+  const schoolNameHeading = document.querySelector("header h1");
+  const SCHOOL_NAME = schoolNameHeading
+    ? schoolNameHeading.textContent.trim()
+    : "Mergington High School";
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -506,7 +509,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
-    const shareUrl = `${window.location.origin}/static/index.html?activity=${encodeURIComponent(
+    const shareUrl = `${window.location.origin}${window.location.pathname}?activity=${encodeURIComponent(
       name
     )}`;
     const shareText = `Check out the ${name} activity at ${SCHOOL_NAME}!`;
