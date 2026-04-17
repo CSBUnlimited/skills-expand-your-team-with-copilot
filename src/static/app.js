@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
+  const schoolNameHeading = document.querySelector("header h1");
+  const SCHOOL_NAME = schoolNameHeading
+    ? schoolNameHeading.textContent.trim()
+    : "School Activities";
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -40,6 +44,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  const sharedActivity = new URLSearchParams(window.location.search).get(
+    "activity"
+  );
+  let hasHighlightedSharedActivity = false;
 
   // Authentication state
   let currentUser = null;
@@ -470,12 +478,15 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.entries(filteredActivities).forEach(([name, details]) => {
       renderActivityCard(name, details);
     });
+
+    highlightSharedActivityCard();
   }
 
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
+    activityCard.dataset.activity = name;
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
@@ -498,6 +509,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const sharePageUrl = new URL(window.location.href);
+    sharePageUrl.searchParams.set("activity", name);
+    const shareUrl = sharePageUrl.toString();
+    const shareText = `Check out the ${name} activity at ${SCHOOL_NAME}!`;
+    const encodedShareUrl = encodeURIComponent(shareUrl);
+    const encodedShareText = encodeURIComponent(shareText);
+    const emailSubject = encodeURIComponent(`${SCHOOL_NAME} activity: ${name}`);
 
     // Create activity tag
     const tagHtml = `
@@ -519,6 +537,44 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const socialShareButtons = `
+      <div class="share-actions">
+        <span class="share-label">Share with friends:</span>
+        <div class="share-buttons">
+          <a
+            class="share-button"
+            href="https://wa.me/?text=${encodedShareText}%20${encodedShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp
+          </a>
+          <a
+            class="share-button"
+            href="https://x.com/intent/tweet?text=${encodedShareText}&url=${encodedShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            X
+          </a>
+          <a
+            class="share-button"
+            href="https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Facebook
+          </a>
+          <a
+            class="share-button"
+            href="mailto:?subject=${emailSubject}&body=${encodedShareText}%0A%0A${encodedShareUrl}"
+          >
+            Email
+          </a>
+        </div>
+      </div>
+    `;
+
     activityCard.innerHTML = `
       ${tagHtml}
       <h4>${name}</h4>
@@ -528,6 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      ${socialShareButtons}
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
@@ -588,6 +645,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activitiesList.appendChild(activityCard);
+  }
+
+  function highlightSharedActivityCard() {
+    if (!sharedActivity || hasHighlightedSharedActivity) {
+      return;
+    }
+
+    const sharedCard = Array.from(
+      activitiesList.querySelectorAll(".activity-card")
+    ).find((card) => card.dataset.activity === sharedActivity);
+    if (!sharedCard) {
+      return;
+    }
+
+    sharedCard.classList.add("shared-activity-highlight");
+    sharedCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    hasHighlightedSharedActivity = true;
   }
 
   // Event listeners for search and filter
