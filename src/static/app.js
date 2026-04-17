@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const schoolNameHeading = document.querySelector("header h1");
   const SCHOOL_NAME = schoolNameHeading
     ? schoolNameHeading.textContent.trim()
-    : "Mergington High School";
+    : "School Activities";
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -509,9 +509,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
-    const shareUrl = `${window.location.origin}${window.location.pathname}?activity=${encodeURIComponent(
-      name
-    )}`;
+    const sharePageUrl = new URL(window.location.href);
+    sharePageUrl.searchParams.set("activity", name);
+    const shareUrl = sharePageUrl.toString();
     const shareText = `Check out the ${name} activity at ${SCHOOL_NAME}!`;
     const encodedShareUrl = encodeURIComponent(shareUrl);
     const encodedShareText = encodeURIComponent(shareText);
