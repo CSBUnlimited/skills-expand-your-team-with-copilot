@@ -503,7 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const shareText = `Check out the ${name} activity at ${SCHOOL_NAME}!`;
     const encodedShareUrl = encodeURIComponent(shareUrl);
     const encodedShareText = encodeURIComponent(shareText);
-    const emailSubject = encodeURIComponent(`Mergington activity: ${name}`);
+    const emailSubject = encodeURIComponent(`${SCHOOL_NAME} activity: ${name}`);
 
     // Create activity tag
     const tagHtml = `
