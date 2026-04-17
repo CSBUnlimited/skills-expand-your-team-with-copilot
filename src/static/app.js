@@ -41,6 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  const sharedActivity = new URLSearchParams(window.location.search).get(
+    "activity"
+  );
+  let hasHighlightedSharedActivity = false;
 
   // Authentication state
   let currentUser = null;
@@ -471,12 +475,15 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.entries(filteredActivities).forEach(([name, details]) => {
       renderActivityCard(name, details);
     });
+
+    highlightSharedActivityCard();
   }
 
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
+    activityCard.dataset.activity = name;
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
@@ -499,7 +506,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
-    const shareUrl = `${window.location.origin}/static/index.html`;
+    const shareUrl = `${window.location.origin}/static/index.html?activity=${encodeURIComponent(
+      name
+    )}`;
     const shareText = `Check out the ${name} activity at ${SCHOOL_NAME}!`;
     const encodedShareUrl = encodeURIComponent(shareUrl);
     const encodedShareText = encodeURIComponent(shareText);
@@ -539,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </a>
           <a
             class="share-button"
-            href="https://twitter.com/intent/tweet?text=${encodedShareText}&url=${encodedShareUrl}"
+            href="https://x.com/intent/tweet?text=${encodedShareText}&url=${encodedShareUrl}"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -633,6 +642,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activitiesList.appendChild(activityCard);
+  }
+
+  function highlightSharedActivityCard() {
+    if (!sharedActivity || hasHighlightedSharedActivity) {
+      return;
+    }
+
+    const sharedCard = Array.from(
+      activitiesList.querySelectorAll(".activity-card")
+    ).find((card) => card.dataset.activity === sharedActivity);
+    if (!sharedCard) {
+      return;
+    }
+
+    sharedCard.classList.add("shared-activity-highlight");
+    sharedCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    hasHighlightedSharedActivity = true;
   }
 
   // Event listeners for search and filter
